@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>🎓 Project Hub</h1>
+      <h2 id="formTitle">Login</h2>
+
+      <div class="auth-methods">
+        <button type="button" class="btn-github" id="githubLoginBtn">
+          <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub">
+          Login with GitHub
+        </button>
+      </div>
+
+      <p class="auth-note">
+        Use your GitHub account to access the dashboard.
+      </p>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/login.js"></script>
+
+<script src="js/notifications.js"></script>
+</body>
+
+</html>

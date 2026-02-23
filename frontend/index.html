@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Projects - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css?v=2">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">🎓 Project Hub</div>
+      <div class="nav-links">
+        <a href="index.html" class="active">All Projects</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        <input type="text" id="searchBar" placeholder="Search projects...">
+        <span id="userGreeting"></span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="category-filter">
+      <div class="filter-group">
+        <label>Filter by Category:</label>
+        <select id="categoryFilter">
+          <option value="all">All Categories</option>
+          <option value="Web Development">Web Development</option>
+          <option value="AI/ML">AI/ML</option>
+          <option value="Game Development">Game Development</option>
+          <option value="Mobile App">Mobile App</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Sort by:</label>
+        <select id="sortFilter">
+          <option value="newest">Newest First</option>
+          <option value="stars">Most Popular (Stars)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="projectsContainer" class="projects-grid"></div>
+
+    <button class="fab" id="submitBtn" title="Submit Project">+</button>
+  </main>
+
+  <div id="submitModal" class="modal">
+    <div class="modal-content advanced-modal">
+      <span class="close">&times;</span>
+      <div class="modal-header">
+        <h2>🚀 Submit New Project</h2>
+        <div class="step-progress">
+          <div class="step active" id="step1-indicator"><span>Category</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step2-indicator"><span>Repo</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step3-indicator"><span>Type</span></div>
+          <div class="step-line"></div>
+          <div class="step" id="step4-indicator"><span>Review</span></div>
+        </div>
+      </div>
+
+      <form id="submitForm">
+        <!-- Step 1: Category Grid -->
+        <div id="section-category" class="form-section">
+          <label>Choose a technology stack for your project</label>
+          <div class="category-grid" id="categoryGrid">
+            <div class="cat-item" data-value="Web Dev">Web Dev</div>
+            <div class="cat-item" data-value="Mobile">Mobile</div>
+            <div class="cat-item" data-value="AI/ML">AI/ML</div>
+            <div class="cat-item" data-value="Data">Data</div>
+            <div class="cat-item" data-value="Game Dev">Game Dev</div>
+            <div class="cat-item" data-value="CyberSec">CyberSec</div>
+            <div class="cat-item" data-value="DevOps">DevOps</div>
+            <div class="cat-item" data-value="IoT">IoT</div>
+            <div class="cat-item" data-value="Blockchain">Blockchain</div>
+            <div class="cat-item" data-value="Other">Other</div>
+          </div>
+
+          <input type="hidden" id="projectCategory" required>
+        </div>
+
+        <!-- Step 2: Project Type & Time Period -->
+        <div id="section-type" class="form-section" style="display: none;">
+          <label class="section-label">Select Project Type & Timeline</label>
+          <div class="type-grid">
+            <label class="type-card" onclick="selectType(this, 'Semester Project')">
+              <span class="type-icon">📚</span>
+              <span class="type-name">Semester Project</span>
+            </label>
+            <label class="type-card" onclick="selectType(this, 'FYP')">
+              <span class="type-icon">🎓</span>
+              <span class="type-name">Final Year Project</span>
+            </label>
+            <label class="type-card" onclick="selectType(this, 'StartUp')">
+              <span class="type-icon">🚀</span>
+              <span class="type-name">StartUp</span>
+            </label>
+            <label class="type-card" onclick="selectType(this, 'Pet Project')">
+              <span class="type-icon">🧸</span>
+              <span class="type-name">Pet Project</span>
+            </label>
+            <label class="type-card" onclick="selectType(this, 'Fun/Learning')">
+              <span class="type-icon">🎮</span>
+              <span class="type-name">Fun / Learning</span>
+            </label>
+            <label class="type-card" onclick="selectType(this, 'Custom')">
+              <span class="type-icon">✨</span>
+              <span class="type-name">Custom</span>
+            </label>
+          </div>
+          <input type="hidden" id="projectType" required>
+
+          <div id="customTypeContainer" style="display: none; margin-top: 15px;">
+            <label>Specify Custom Type</label>
+            <input type="text" id="customProjectType" placeholder="e.g. Hackathon, Research, etc." class="form-input">
+          </div>
+
+          <div style="margin-top: 20px;">
+            <label>Time Period (Semester or Year)</label>
+            <input type="text" id="timePeriod" placeholder="e.g. Fall 2023, Spring 2024, 2023-2024" class="form-input">
+          </div>
+
+          <div id="supervisorContainer" style="display: none; margin-top: 20px;">
+            <label>Assigned Supervisor (for Final Year Project)</label>
+            <input type="text" id="supervisorName" placeholder="e.g. Dr. John Doe" class="form-input">
+          </div>
+        </div>
+
+        <!-- Step 2: Repository Selection -->
+        <div id="section-repo" class="form-section" style="display: none;">
+          <label>Connect a public GitHub repository</label>
+          <div class="repo-search-box">
+            <input type="text" id="githubUsernameSearch" placeholder="GitHub Username or URL">
+            <button type="button" id="btnFetchRepos" class="btn-small">Load Repos</button>
+          </div>
+
+
+          <div id="repoList" class="repo-list-container"></div>
+          <div id="selectedRepoInfo" class="selected-repo-card" style="display: none;">
+            <div class="repo-details">
+              <strong id="displayRepoName">Repo Name</strong>
+              <span id="displayRepoUrl">url...</span>
+            </div>
+            <button type="button" id="btnClearRepo" class="btn-icon">✕</button>
+          </div>
+          <input type="hidden" id="projectName">
+          <input type="hidden" id="githubUrl">
+          <textarea id="projectDescription" style="display: none;"></textarea>
+        </div>
+
+        <!-- Step 3: Confirmation -->
+        <div id="section-review" class="form-section" style="display: none;">
+          <label>Finalize and confirm project submission</label>
+          <div class="review-card">
+            <label class="checkbox-container">
+              <input type="checkbox" id="confirmGuidelines" required>
+              <span class="checkmark"></span>
+              I confirm that this project allows collaboration and follows community guidelines.
+            </label>
+          </div>
+        </div>
+
+        <div id="submitError" class="error-msg" style="display: none;"></div>
+
+        <div class="modal-footer">
+          <button type="button" id="btnPrevStep" class="btn-secondary" style="display: none;">Back</button>
+          <button type="button" id="btnNextStep" class="btn-primary">Next Step</button>
+          <button type="submit" id="btnSubmitProject" class="btn-primary" style="display: none;">Submit Project
+            🚀</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/main.js?v=2"></script>
+
+  <script src="js/notifications.js"></script>
+</body>
+
+</html>

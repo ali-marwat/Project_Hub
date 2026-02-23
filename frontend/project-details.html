@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <title>Project Details (UPDATED) - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">🎓 Project Hub</div>
+      <div class="nav-links">
+        <a href="index.html">All Projects</a>
+        <a href="dashboard.html" id="navDashboardLink">My Dashboard</a>
+        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        <span id="userGreeting"></span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div id="projectDetails" class="project-detail"></div>
+
+    <div class="comments-section">
+      <h3>💬 Comments</h3>
+      <form id="commentForm">
+        <textarea id="commentText" placeholder="Add a comment..." required></textarea>
+        <button type="submit" class="btn-primary">Post Comment</button>
+      </form>
+      <div id="commentsContainer"></div>
+    </div>
+  </main>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/project-details-v4.js"></script>
+
+<script src="js/notifications.js"></script>
+</body>
+
+</html>

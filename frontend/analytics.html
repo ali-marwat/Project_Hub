@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Analytics - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">🎓 Project Hub</div>
+      <div class="nav-links">
+        <a href="index.html">All Projects</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <span id="userGreeting"></span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>📊 Project Analytics</h1>
+
+    <div class="analytics-header">
+      <h2 id="projectName">Loading...</h2>
+      <a id="backToProject" class="btn-primary">← Back to Project</a>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3 id="totalViews">0</h3>
+        <p>Total Views</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="totalUpvotes">0</h3>
+        <p>Upvotes</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="totalComments">0</h3>
+        <p>Comments</p>
+      </div>
+      <div class="stat-card">
+        <h3 id="totalBookmarks">0</h3>
+        <p>Bookmarks</p>
+      </div>
+    </div>
+
+    <!-- Views Chart -->
+    <div class="chart-container">
+      <h3>📈 Views Over Last 30 Days</h3>
+      <div id="viewsChart" class="chart"></div>
+    </div>
+  </main>
+
+  <script src="js/analytics.js"></script>
+<script src="js/notifications.js"></script>
+</body>
+
+</html>

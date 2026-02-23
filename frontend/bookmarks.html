@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookmarks - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">🎓 Project Hub</div>
+      <div class="nav-links">
+        <a href="index.html">All Projects</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <a href="bookmarks.html" class="active">Bookmarks</a>
+        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        <span id="userGreeting"></span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1>📚 My Bookmarks</h1>
+    <p class="subtitle">Projects you've saved for later</p>
+
+    <div id="bookmarksContainer" class="projects-grid"></div>
+  </main>
+
+  <script src="js/bookmarks.js"></script>
+<script src="js/notifications.js"></script>
+</body>
+
+</html>

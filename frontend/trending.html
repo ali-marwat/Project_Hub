@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trending Projects - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">🎓 Project Hub</div>
+      <div class="nav-links">
+        <a href="index.html">All Projects</a>
+        <a href="trending.html" class="active">Trending</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <a href="bookmarks.html">Bookmarks</a>
+        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        <span id="userGreeting"></span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <div class="trending-header">
+      <h1>🔥 Trending Projects</h1>
+      <p class="subtitle">Most viewed in the last 7 days</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab('trending')">🔥 Trending</button>
+      <button class="tab-btn" onclick="showTab('popular')">⭐ Most Popular</button>
+    </div>
+
+    <div id="trendingTab" class="tab-content active">
+      <div id="trendingProjects" class="projects-grid"></div>
+    </div>
+
+    <div id="popularTab" class="tab-content">
+      <div id="popularProjects" class="projects-grid"></div>
+    </div>
+
+    <!-- Tag Cloud -->
+    <div class="tag-cloud-section">
+      <h2>🏷️ Popular Tags</h2>
+      <div id="tagCloud" class="tag-cloud"></div>
+    </div>
+  </main>
+
+  <script src="js/trending.js"></script>
+<script src="js/notifications.js"></script>
+</body>
+
+</html>

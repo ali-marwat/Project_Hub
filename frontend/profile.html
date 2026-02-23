@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile - Project Hub</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">🎓 Project Hub</div>
+      <div class="nav-links">
+        <a href="index.html">All Projects</a>
+        <a href="dashboard.html">My Dashboard</a>
+        <a href="bookmarks.html">Bookmarks</a>
+        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        <span id="userGreeting"></span>
+        <button onclick="logout()" class="btn-logout">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <img id="profileAvatar" src="/uploads/avatars/default-avatar.png" alt="Avatar">
+        <button id="editProfileBtn" class="btn-edit-profile" style="display: none;">Edit Profile</button>
+      </div>
+      <div class="profile-info">
+        <h1 id="profileUsername">Loading...</h1>
+        <p id="profileBio"></p>
+        <div class="profile-meta">
+          <span id="profileLocation"></span>
+          <span id="profileWebsite"></span>
+          <span id="profileGithub"></span>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="stat-item">
+          <h3 id="totalProjects">0</h3>
+          <p>Projects</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="totalUpvotes">0</h3>
+          <p>Total Upvotes</p>
+        </div>
+        <div class="stat-item">
+          <h3 id="totalViews">0</h3>
+          <p>Total Views</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- User's Projects -->
+    <div class="profile-projects">
+      <h2>Projects</h2>
+      <div id="userProjects" class="projects-grid"></div>
+    </div>
+  </main>
+
+  <!-- Edit Profile Modal -->
+  <div id="editProfileModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Edit Profile</h2>
+      <form id="editProfileForm">
+        <input type="text" id="editUsername" placeholder="Username" required>
+        <textarea id="editBio" placeholder="Bio" rows="4"></textarea>
+        <input type="text" id="editLocation" placeholder="Location">
+        <input type="url" id="editWebsite" placeholder="Website">
+
+        <label for="avatarUpload">Avatar:</label>
+        <input type="file" id="avatarUpload" accept="image/*">
+
+        <button type="submit" class="btn-primary">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/profile.js"></script>
+
+<script src="js/notifications.js"></script>
+</body>
+
+</html>

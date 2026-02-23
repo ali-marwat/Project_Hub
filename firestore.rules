@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Helper Functions ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
+
+    // --- Users Collection ---
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && 
+                      request.auth.uid == userId &&
+                      (!request.resource.data.keys().hasAll(['isAdmin']) || request.resource.data.isAdmin == false);
+      allow update: if isSignedIn() && 
+                      request.auth.uid == userId &&
+                      (request.resource.data.isAdmin == resource.data.isAdmin);
+    }
+
+    // --- Projects Collection ---
+    match /projects/{projectId} {
+      
+      // Read Logic:
+      // 1. Approved projects sab dekh saktay hain.
+      // 2. Pending/Rejected sirf Owner aur Admin dekh saktay hain.
+      allow read: if resource.data.status == 'APPROVED' ||
+                    (isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin()));
+
+      // Create Logic:
+      // Match with Android Project.kt: must use 'userId' and status must be 'PENDING'
+      allow create: if isSignedIn() &&
+                      request.resource.data.userId == request.auth.uid &&
+                      request.resource.data.status == 'PENDING';
+
+      // Update Logic:
+      allow update: if isSignedIn() && (
+        isAdmin() || // Admin sab change kar sakta ha
+        (resource.data.userId == request.auth.uid && request.resource.data.status == resource.data.status) || // Owner edit kar sakta ha par status nahi
+        // UPDATED: Allow users to update only 'likes' AND 'comments'
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'comments'])) 
+      );
+
+      allow delete: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+  }
+}
