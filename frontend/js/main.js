@@ -1,4 +1,4 @@
-var API_URL = 'http://localhost:3000/api';
+const API_URL = CONFIG.API_URL;
 var allProjects = [];
 var currentUser = null;
 
@@ -214,7 +214,7 @@ function prevStep() {
 function fetchGitHubRepos() {
   var input = document.getElementById('githubUsernameSearch').value.trim();
   if (!input) {
-    alert('Please enter a GitHub username or paste a repository URL');
+    showNotification('Please enter a GitHub username or paste a repository URL', 'warning');
     return;
   }
 
@@ -471,7 +471,7 @@ function displayProjects(projects) {
     html += '<div class="project-stats">';
     html += '<span class="stat">⭐ ' + (project.githubStars || 0) + '</span>';
     html += '<span class="stat">🍴 ' + (project.githubForks || 0) + '</span>';
-    html += '<span class="stat">👍 ' + (project.likes ? project.likes.length : 0) + '</span>';
+    html += '<span class="stat">❤️ ' + (project.likes ? project.likes.length : 0) + '</span>';
     html += '</div>';
     html += '<p style="font-size: 12px; color: #555;">By ' + (project.userName || 'Unknown') + ' • ' + new Date(project.timestamp).toLocaleDateString() + '</p>';
     html += '<div style="margin-top: 15px;">';
@@ -581,7 +581,7 @@ async function submitProject(e) {
 
   db.collection('projects').add(projectData)
     .then(function (docRef) {
-      alert('✅ Project submitted successfully!');
+      showNotification('Project submitted successfully!', 'success');
       document.getElementById('submitModal').style.display = 'none';
       document.getElementById('submitForm').reset();
       clearSelectedRepo();
@@ -600,8 +600,8 @@ function showSubmitError(msg) {
 }
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

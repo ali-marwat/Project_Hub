@@ -1,27 +1,27 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = CONFIG.API_URL;
 let currentUser = null;
 let projectId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth();
-  
+
   const urlParams = new URLSearchParams(window.location.search);
   projectId = urlParams.get('id');
-  
+
   if (!projectId) {
-    alert('No project ID specified');
+    showNotification('No project ID specified', 'error');
     window.location.href = 'dashboard.html';
     return;
   }
 
   document.getElementById('backToProject').href = `project-details.html?id=${projectId}`;
-  
+
   loadAnalytics();
 });
 
 function checkAuth() {
   const userData = localStorage.getItem('currentUser');
-  
+
   if (!userData) {
     window.location.href = 'login.html';
     return;
@@ -47,7 +47,7 @@ async function loadAnalytics() {
     displayAnalytics(data);
   } catch (error) {
     console.error('Error loading analytics:', error);
-    alert('Error loading analytics. Make sure you own this project.');
+    showNotification('Error loading analytics. Make sure you own this project.', 'error');
     window.location.href = 'dashboard.html';
   }
 }
@@ -78,8 +78,8 @@ function displayViewsChart(dailyViews) {
   container.innerHTML = `
     <div class="chart-bars">
       ${dailyViews.map(day => {
-        const height = maxViews > 0 ? (day.views / maxViews) * 100 : 0;
-        return `
+    const height = maxViews > 0 ? (day.views / maxViews) * 100 : 0;
+    return `
           <div class="chart-bar-wrapper">
             <div class="chart-bar" style="height: ${height}%;">
               <span class="chart-value">${day.views}</span>
@@ -87,7 +87,7 @@ function displayViewsChart(dailyViews) {
             <div class="chart-label">${formatDate(day.view_date)}</div>
           </div>
         `;
-      }).join('')}
+  }).join('')}
     </div>
   `;
 }
@@ -102,8 +102,8 @@ function logout() {
   window.location.href = 'login.html';
 }
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

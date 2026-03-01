@@ -1,4 +1,4 @@
-var API_URL = 'http://localhost:3000/api';
+var API_URL = CONFIG.API_URL;
 var urlParams = new URLSearchParams(window.location.search);
 var projectId = urlParams.get('id');
 var currentUser = null;
@@ -42,7 +42,7 @@ function loadProjectDetails() {
   // Load Project Details from 'projects' collection (matching Android repo code)
   db.collection('projects').doc(projectId).onSnapshot(function (doc) {
     if (!doc.exists) {
-      alert('Project not found');
+      showNotification('Project not found', 'error');
       window.location.href = 'index.html';
       return;
     }
@@ -103,14 +103,15 @@ async function renderProjectV4(project) {
   html += '<div class="project-stats" style="margin-top: 20px;">';
   html += '<span class="stat">⭐ ' + (project.githubStars || 0) + ' Stars</span>';
   html += '<span class="stat">🍴 ' + (project.githubForks || 0) + ' Forks</span>';
-  html += '<span class="stat">👍 ' + (project.likes ? project.likes.length : 0) + ' Upvotes</span>';
+  html += '<span class="stat"><span style="font-size: 1.5em; margin-right: 5px;">❤️</span> ' + (project.likes ? project.likes.length : 0) + ' Upvotes</span>';
   html += '</div>';
 
   html += '<div style="margin-top: 25px;">';
   html += '<button class="btn-primary" onclick="toggleUpvote()" id="upvoteBtn">';
-  html += project.userHasUpvoted ? '❤️ Remove Upvote' : '👍 Upvote';
+  html += project.userHasUpvoted ? '<span style="font-size: 1.2em;">❤️</span> Remove Upvote' : '<span style="font-size: 1.2em;">❤️</span> Upvote';
   html += '</button>';
   html += '<button class="btn-primary" onclick="window.open(\'' + project.githubLink + '\', \'_blank\')">View on GitHub</button>';
+  html += '<button class="btn-primary" style="background: #28a745; margin-left: 10px;" onclick="window.open(\'' + project.githubLink + '/archive/HEAD.zip\', \'_blank\')">⬇️ Download Code</button>';
   html += '</div>';
 
   document.getElementById('projectDetails').innerHTML = html;
@@ -168,7 +169,7 @@ function toggleUpvote() {
     })
     .catch(error => {
       console.error('Error toggling upvote:', error);
-      alert('Failed to update upvote');
+      showNotification('Failed to update upvote', 'error');
     });
 }
 
@@ -181,7 +182,7 @@ function postComment(e) {
   console.log('[DEBUG] Attempting to post comment');
   if (!auth.currentUser) {
     console.error('[DEBUG] Firebase Auth CurrentUser is null! Rules will reject this.');
-    alert('Session expired or invalid. Please logout and login again.');
+    showNotification('Session expired or invalid. Please logout and login again.', 'error');
     return;
   }
   console.log('[DEBUG] Auth User UID:', auth.currentUser.uid);
@@ -206,33 +207,31 @@ function postComment(e) {
     })
     .catch(function (error) {
       console.error('Error posting comment:', error);
-      alert('Failed to post comment: ' + error.message);
+      showNotification('Failed to post comment: ' + error.message, 'error');
     });
 }
 
 function deleteComment(commentId) {
-  if (!confirm('Are you sure you want to delete this comment?')) {
-    return;
-  }
+  showConfirm('Are you sure you want to delete this comment?', () => {
+    let comments = currentProject.comments || [];
+    comments = comments.filter(c => c.id !== commentId);
 
-  let comments = currentProject.comments || [];
-  comments = comments.filter(c => c.id !== commentId);
-
-  db.collection('projects').doc(projectId).update({
-    comments: comments
-  })
-    .then(() => {
-      alert('✅ Comment deleted!');
+    db.collection('projects').doc(projectId).update({
+      comments: comments
     })
-    .catch(error => {
-      console.error('Error deleting comment:', error);
-      alert('Failed to delete comment');
-    });
+      .then(() => {
+        showNotification('Comment deleted!', 'success');
+      })
+      .catch(error => {
+        console.error('Error deleting comment:', error);
+        showNotification('Failed to delete comment', 'error');
+      });
+  });
 }
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

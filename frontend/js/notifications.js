@@ -59,3 +59,39 @@ window.alert = function (message) {
 
     showNotification(cleanMessage, type);
 };
+
+// Custom Confirm Dialog Dialog System
+window.showConfirm = function (message, onConfirm) {
+    let modal = document.getElementById('customConfirmModal');
+
+    // Create modal dynamically if it doesn't exist
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'customConfirmModal';
+        modal.className = 'modal';
+
+        modal.innerHTML = `
+      <div class="modal-content" style="max-width: 400px; text-align: center;">
+        <h2 style="margin-top: 0;">⚠️ Please Confirm</h2>
+        <p id="confirmMessage" style="margin: 20px 0;">Are you sure?</p>
+        <div style="display: flex; justify-content: space-between; gap: 10px;">
+          <button class="btn-secondary" id="confirmCancelBtn" style="flex: 1;">Cancel</button>
+          <button class="btn-primary" id="confirmOkBtn" style="flex: 1;">Yes, I'm sure</button>
+        </div>
+      </div>
+    `;
+        document.body.appendChild(modal);
+    }
+
+    document.getElementById('confirmMessage').innerText = message;
+    modal.style.display = 'block';
+
+    document.getElementById('confirmCancelBtn').onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    document.getElementById('confirmOkBtn').onclick = () => {
+        modal.style.display = 'none';
+        if (onConfirm) onConfirm();
+    };
+};

@@ -13,12 +13,18 @@
 
 <body>
   <nav class="navbar">
-    <div class="container">
-      <div class="logo">🎓 Project Hub</div>
-      <div class="nav-links">
-        <a href="index.html">All Projects</a>
-        <a href="dashboard.html" id="navDashboardLink">My Dashboard</a>
-        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+    <div class="container nav-container">
+      <div class="nav-left">
+        <div class="logo">🎓 Project Hub<span class="breadcrumb"> / Project Details</span></div>
+      </div>
+      <div class="nav-center">
+        <div class="nav-links">
+          <a href="index.html">All Projects</a>
+          <a href="dashboard.html" id="navDashboardLink">My Dashboard</a>
+          <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        </div>
+      </div>
+      <div class="nav-right">
         <span id="userGreeting"></span>
         <button onclick="logout()" class="btn-logout">Logout</button>
       </div>
@@ -42,9 +48,10 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="js/firebase-config.js"></script>
-  <script src="js/project-details-v4.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/project-details-v4.js?v=2"></script>
 
-<script src="js/notifications.js"></script>
+  <script src="js/notifications.js"></script>
 </body>
 
 </html>

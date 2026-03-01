@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = CONFIG.API_URL;
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function checkAuth() {
   const userData = localStorage.getItem('currentUser');
-  
+
   if (!userData) {
     window.location.href = 'login.html';
     return;
@@ -18,7 +18,7 @@ function checkAuth() {
 
   currentUser = JSON.parse(userData);
   document.getElementById('userGreeting').textContent = `Hello, ${currentUser.username}!`;
-  
+
   if (currentUser.role === 'admin') {
     document.getElementById('adminLink').style.display = 'inline-block';
   }
@@ -65,7 +65,7 @@ function displayProjects(projects, containerId) {
   container.innerHTML = projects.map((project, index) => {
     const screenshots = project.screenshots ? JSON.parse(project.screenshots) : [];
     const rank = index + 1;
-    
+
     return `
       <div class="project-card trending-card">
         <div class="trending-rank">#${rank}</div>
@@ -81,7 +81,7 @@ function displayProjects(projects, containerId) {
         <div class="project-stats">
           <span class="stat">👁️ ${project.views || 0} views</span>
           <span class="stat">⭐ ${project.stars || 0} stars</span>
-          <span class="stat">👍 ${project.upvotes || 0} upvotes</span>
+          <span class="stat">❤️ ${project.upvotes || 0} upvotes</span>
           ${project.recent_views ? `<span class="stat trending-badge">🔥 ${project.recent_views} this week</span>` : ''}
         </div>
 
@@ -126,9 +126,9 @@ function displayTagCloud(tags) {
 function calculateFontSize(count, min, max) {
   const minSize = 14;
   const maxSize = 32;
-  
+
   if (max === min) return minSize;
-  
+
   const ratio = (count - min) / (max - min);
   return Math.round(minSize + (ratio * (maxSize - minSize)));
 }
@@ -156,12 +156,8 @@ function showTab(tabName) {
 }
 
 function logout() {
-  localStorage.removeItem('currentUser');
-  window.location.href = 'login.html';
-}
-function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

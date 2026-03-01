@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = CONFIG.API_URL;
 let currentUser = null;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function checkAuth() {
   const userData = localStorage.getItem('currentUser');
-  
+
   if (!userData) {
     window.location.href = 'login.html';
     return;
@@ -16,7 +16,7 @@ function checkAuth() {
 
   currentUser = JSON.parse(userData);
   document.getElementById('userGreeting').textContent = `Hello, ${currentUser.username}!`;
-  
+
   if (currentUser.role === 'admin') {
     document.getElementById('adminLink').style.display = 'inline-block';
   }
@@ -47,7 +47,7 @@ function displayBookmarks(bookmarks) {
 
   container.innerHTML = bookmarks.map(project => {
     const screenshots = project.screenshots ? JSON.parse(project.screenshots) : [];
-    
+
     return `
       <div class="project-card">
         ${screenshots[0] ? `<img src="${screenshots[0]}" alt="${project.name}" class="project-thumbnail">` : ''}
@@ -62,7 +62,7 @@ function displayBookmarks(bookmarks) {
         <div class="project-stats">
           <span class="stat">👁️ ${project.views || 0}</span>
           <span class="stat">⭐ ${project.stars || 0}</span>
-          <span class="stat">👍 ${project.upvotes || 0}</span>
+          <span class="stat">❤️ ${project.upvotes || 0}</span>
         </div>
 
         <div style="margin-top: 15px; display: flex; gap: 10px;">
@@ -79,23 +79,24 @@ function displayBookmarks(bookmarks) {
 }
 
 async function removeBookmark(projectId) {
-  if (!confirm('Remove this bookmark?')) return;
+  showConfirm('Remove this bookmark?', async () => {
+    try {
+      const response = await fetch(`${API_URL}/bookmarks/${projectId}`, {
+        method: 'DELETE',
+        headers: {
+          'user-id': currentUser.id
+        }
+      });
 
-  try {
-    const response = await fetch(`${API_URL}/bookmarks/${projectId}`, {
-      method: 'DELETE',
-      headers: {
-        'user-id': currentUser.id
+      if (response.ok) {
+        showNotification('Bookmark removed', 'success');
+        loadBookmarks();
       }
-    });
-
-    if (response.ok) {
-      alert('✅ Bookmark removed');
-      loadBookmarks();
+    } catch (error) {
+      console.error('Error removing bookmark:', error);
+      showNotification('Failed to remove bookmark', 'error');
     }
-  } catch (error) {
-    console.error('Error removing bookmark:', error);
-  }
+  });
 }
 
 function logout() {

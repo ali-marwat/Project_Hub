@@ -1,4 +1,4 @@
-var API_URL = 'http://localhost:3000/api';
+const API_URL = CONFIG.API_URL;
 var currentUser = null;
 var currentStatus = 'PENDING';
 var unsubscribeProjects = null;
@@ -6,6 +6,7 @@ var unsubscribeProjects = null;
 document.addEventListener('DOMContentLoaded', function () {
   checkAdminAuth();
   loadAdminProjects('PENDING');
+  setupRejectModal();
 });
 
 function checkAdminAuth() {
@@ -19,7 +20,7 @@ function checkAdminAuth() {
   currentUser = JSON.parse(userData);
 
   if (currentUser.role !== 'admin') {
-    alert('❌ Admin access only!');
+    showNotification('❌ Admin access only!', 'error');
     window.location.href = 'index.html';
     return;
   }
@@ -38,6 +39,15 @@ function switchTab(status, btn) {
   btn.classList.add('active');
 
   loadAdminProjects(status);
+
+  // Auto-scroll so projects are visible below the sticky navbar
+  setTimeout(function () {
+    var tabsContainer = document.querySelector('.tabs');
+    if (tabsContainer) {
+      var y = tabsContainer.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, 50);
 }
 
 function loadAdminProjects(status) {
@@ -130,32 +140,66 @@ function approveProject(id) {
     })
     .catch(function (error) {
       console.error('Error approving project:', error);
-      alert('Failed to approve project');
+      showNotification('Failed to approve project', 'error');
     });
 }
 
-function rejectProject(id) {
-  const reason = prompt('Enter rejection reason (optional):');
-  if (reason === null) return; // Cancelled
+let currentRejectId = null;
 
+function setupRejectModal() {
+  const modal = document.getElementById('rejectModal');
+  const closeBtn = document.getElementById('closeRejectModal');
+  const cancelBtn = document.getElementById('cancelRejectBtn');
+  const confirmBtn = document.getElementById('confirmRejectBtn');
+
+  if (closeBtn) closeBtn.onclick = () => modal.style.display = 'none';
+  if (cancelBtn) cancelBtn.onclick = () => modal.style.display = 'none';
+
+  window.onclick = (e) => {
+    if (e.target == modal) modal.style.display = 'none';
+  };
+
+  if (confirmBtn) {
+    confirmBtn.onclick = () => {
+      const reason = document.getElementById('rejectReason').value;
+      modal.style.display = 'none';
+      processRejection(currentRejectId, reason);
+    };
+  }
+}
+
+function rejectProject(id) {
+  currentRejectId = id;
+  document.getElementById('rejectReason').value = ''; // clear previous
+  document.getElementById('rejectModal').style.display = 'block';
+}
+
+function processRejection(id, reason) {
   db.collection('projects')
     .doc(id).update({
       status: 'REJECTED',
       approved: false,
-      rejectionReason: reason
+      rejectionReason: reason || ''
     })
     .then(function () {
       console.log('❌ Project rejected');
+      if (typeof showNotification === 'function') {
+        showNotification('Project rejected successfully', 'success');
+      }
     })
     .catch(function (error) {
       console.error('Error rejecting project:', error);
-      alert('Failed to update project');
+      if (typeof showNotification === 'function') {
+        showNotification('Failed to update project', 'error');
+      } else {
+        showNotification('Failed to update project', 'error');
+      }
     });
 }
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

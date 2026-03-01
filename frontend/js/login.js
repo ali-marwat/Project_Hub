@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function loginWithGitHub() {
   if (window.location.protocol === 'file:') {
-    alert('⚠️ Error: Firebase Auth requires a local server. Please use Live Server.');
+    showNotification('⚠️ Error: Firebase Auth requires a local server. Please use Live Server.', 'error');
     return;
   }
 
@@ -85,18 +85,18 @@ function loginWithGitHub() {
               })
               .catch(function (error) {
                 console.error('Error creating user record:', error);
-                alert('❌ Error creating user profile: ' + error.message);
+                showNotification('❌ Error creating user profile: ' + error.message, 'error');
               });
           }
         })
         .catch(function (err) {
           console.error('Shared Firestore Fetch Error:', err);
-          alert('❌ Database Error: ' + err.message);
+          showNotification('❌ Database Error: ' + err.message, 'error');
         });
     })
     .catch(function (error) {
       console.error('GitHub Login Error:', error);
-      alert('❌ GitHub Login failed: ' + error.message);
+      showNotification('❌ GitHub Login failed: ' + error.message, 'error');
     });
 }
 

@@ -1,4 +1,4 @@
-var API_URL = 'http://localhost:3000/api';
+var API_URL = CONFIG.API_URL;
 var currentUser = null;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -201,7 +201,7 @@ function prevStep() {
 function fetchGitHubRepos() {
   var input = document.getElementById('githubUsernameSearch').value.trim();
   if (!input) {
-    alert('Please enter a GitHub username or paste a repository URL');
+    showNotification('Please enter a GitHub username or paste a repository URL', 'warning');
     return;
   }
 
@@ -441,7 +441,7 @@ function displayProjects(projects, containerId) {
     html += '<div class="project-stats">';
     html += '<span class="stat">⭐ ' + (project.githubStars || 0) + '</span>';
     html += '<span class="stat">🍴 ' + (project.githubForks || 0) + '</span>';
-    html += '<span class="stat">👍 ' + (project.likes ? project.likes.length : 0) + '</span>';
+    html += '<span class="stat">❤️ ' + (project.likes ? project.likes.length : 0) + '</span>';
     html += '</div>';
     html += '<p style="font-size: 12px; color: #555;">Submitted: ' + new Date(project.timestamp).toLocaleDateString() + '</p>';
     html += '<div style="margin-top: 15px;">';
@@ -477,6 +477,15 @@ function showTab(tabName) {
 
   // Remember the active tab for back button navigation
   sessionStorage.setItem('activeDashboardTab', tabName);
+
+  // Auto-scroll so projects are visible below the sticky navbar
+  setTimeout(function () {
+    var tabsContainer = document.querySelector('.tabs');
+    if (tabsContainer) {
+      var y = tabsContainer.getBoundingClientRect().top + window.scrollY - 100;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, 50);
 }
 
 async function submitProject(e) {
@@ -548,7 +557,7 @@ async function submitProject(e) {
 
   db.collection('projects').add(projectData)
     .then(function (docRef) {
-      alert('✅ Project submitted successfully!');
+      showNotification('Project submitted successfully!', 'success');
       document.getElementById('submitModal').style.display = 'none';
       document.getElementById('submitForm').reset();
       clearSelectedRepo();
@@ -575,8 +584,8 @@ function viewProject(id, fromTab) {
 }
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

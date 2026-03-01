@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:3000/api';
+const API_URL = CONFIG.API_URL;
 let currentUser = null;
 let profileUserId = null;
 
@@ -62,7 +62,7 @@ async function loadProfile() {
     // Load User Data from Firestore
     db.collection('users').doc(profileUserId).onSnapshot(async (doc) => {
       if (!doc.exists) {
-        alert('Profile not found');
+        showNotification('Profile not found', 'error');
         window.location.href = 'index.html';
         return;
       }
@@ -151,7 +151,7 @@ function displayProjects(projects) {
       <div class="project-stats">
         <span class="stat">👁️ ${project.views || 0}</span>
         <span class="stat">⭐ ${project.stars || 0}</span>
-        <span class="stat">👍 ${project.upvotes || 0}</span>
+        <span class="stat">❤️ ${project.upvotes || 0}</span>
       </div>
     </div>
   `).join('');
@@ -177,7 +177,7 @@ async function updateProfile(e) {
   try {
     await db.collection('users').doc(currentUser.id).update(profileData);
 
-    alert('✅ Profile updated!');
+    showNotification('Profile updated!', 'success');
     document.getElementById('editProfileModal').style.display = 'none';
 
     // Update currentUser local state
@@ -188,7 +188,7 @@ async function updateProfile(e) {
     // for now we stick to text data sync.
   } catch (error) {
     console.error('Error updating profile:', error);
-    alert('❌ Error updating profile');
+    showNotification('Error updating profile', 'error');
   }
 }
 
@@ -222,8 +222,8 @@ function logout() {
 }
 
 function logout() {
-  if (confirm('Are you sure you want to logout?')) {
+  showConfirm('Are you sure you want to logout?', () => {
     localStorage.removeItem('currentUser');
     window.location.href = 'login.html';
-  }
+  });
 }

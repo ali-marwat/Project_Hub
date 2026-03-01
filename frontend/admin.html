@@ -10,11 +10,18 @@
 
 <body>
   <nav class="navbar">
-    <div class="container">
-      <div class="logo">🛠️ Admin Dashboard</div>
-      <div class="nav-links">
-        <a href="index.html">All Projects</a>
-        <a href="dashboard.html">My Dashboard</a>
+    <div class="container nav-container">
+      <div class="nav-left">
+        <div class="logo">🎓 Project Hub<span class="breadcrumb"> / Admin Panel</span></div>
+      </div>
+      <div class="nav-center">
+        <div class="nav-links">
+          <a href="index.html">All Projects</a>
+          <a href="dashboard.html">My Dashboard</a>
+          <a href="admin.html" class="active" id="adminLink">Admin Panel</a>
+        </div>
+      </div>
+      <div class="nav-right">
         <span id="userGreeting"></span>
         <button onclick="logout()" class="btn-logout">Logout</button>
       </div>
@@ -38,13 +45,34 @@
     </div>
   </main>
 
+  <!-- Rejection Modal -->
+  <div id="rejectModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="closeRejectModal">&times;</span>
+      <h2>❌ Reject Project</h2>
+      <p>Please provide a reason for rejecting this project (optional):</p>
+
+      <div class="form-group" style="margin-top: 15px;">
+        <textarea id="rejectReason" class="form-input" rows="4"
+          placeholder="e.g., Code missing, unrelated project..."></textarea>
+      </div>
+
+      <div style="margin-top: 20px; text-align: right;">
+        <button class="btn-secondary" id="cancelRejectBtn">Cancel</button>
+        <button class="btn-primary" id="confirmRejectBtn" style="background:#f44336; border-color:#f44336;">Reject
+          Project</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="js/firebase-config.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/admin.js"></script>
 
-<script src="js/notifications.js"></script>
+  <script src="js/notifications.js"></script>
 </body>
 
 </html>
