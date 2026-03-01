@@ -43,25 +43,33 @@ function checkAuth() {
 var currentStep = 1;
 
 function setupEventListeners() {
-  var categoryToggleBtn = document.getElementById('categoryToggleBtn');
-  var categoryTabsWrapper = document.getElementById('categoryTabsWrapper');
-  if (categoryToggleBtn && categoryTabsWrapper) {
-    categoryToggleBtn.addEventListener('click', function () {
-      this.classList.toggle('open');
+  function initToggle(btnId, wrapperId, displayType) {
+    var btn = document.getElementById(btnId);
+    var wrapper = document.getElementById(wrapperId);
+    if (btn && wrapper) {
+      btn.addEventListener('click', function () {
+        this.classList.toggle('open');
+        if (wrapper.classList.contains('expanded')) {
+          wrapper.classList.remove('expanded');
+          setTimeout(() => { wrapper.style.display = 'none'; }, 300);
+        } else {
+          wrapper.style.display = displayType;
+          setTimeout(() => { wrapper.classList.add('expanded'); }, 10);
+        }
+      });
+    }
+  }
 
-      if (categoryTabsWrapper.classList.contains('expanded')) {
-        categoryTabsWrapper.classList.remove('expanded');
-        setTimeout(() => {
-          categoryTabsWrapper.style.display = 'none';
-        }, 300); // Wait for CSS transition to finish before hiding it from DOM
-      } else {
-        categoryTabsWrapper.style.display = 'block';
-        // Give browser a tiny delay to render 'block' before applying the height transition
-        setTimeout(() => {
-          categoryTabsWrapper.classList.add('expanded');
-        }, 10);
-      }
-    });
+  initToggle('categoryToggleBtn', 'categoryTabsWrapper', 'block');
+  initToggle('sortToggleBtn', 'sortTabsWrapper', 'flex');
+
+  function scrollToProjects() {
+    var container = document.getElementById('projectsContainer');
+    if (container) {
+      const yOffset = -150; // offset value to prevent hiding the first row
+      const y = container.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
   }
 
   var categoryTabs = document.querySelectorAll('.category-tab');
@@ -72,11 +80,8 @@ function setupEventListeners() {
         this.classList.add('active');
         applyFilters();
 
-        // Auto-scroll to projects container
-        var container = document.getElementById('projectsContainer');
-        if (container) {
-          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        // Auto-scroll to projects container with offset
+        scrollToProjects();
       });
     });
   }
@@ -92,11 +97,8 @@ function setupEventListeners() {
         this.classList.add('active');
         applyFilters();
 
-        // Auto-scroll to projects container
-        var container = document.getElementById('projectsContainer');
-        if (container) {
-          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        // Auto-scroll to projects container with offset
+        scrollToProjects();
       });
     });
   }
