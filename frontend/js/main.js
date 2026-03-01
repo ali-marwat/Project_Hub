@@ -43,13 +43,24 @@ function checkAuth() {
 var currentStep = 1;
 
 function setupEventListeners() {
-  // Existing filters
   var categoryToggleBtn = document.getElementById('categoryToggleBtn');
   var categoryTabsWrapper = document.getElementById('categoryTabsWrapper');
   if (categoryToggleBtn && categoryTabsWrapper) {
     categoryToggleBtn.addEventListener('click', function () {
       this.classList.toggle('open');
-      categoryTabsWrapper.classList.toggle('expanded');
+
+      if (categoryTabsWrapper.classList.contains('expanded')) {
+        categoryTabsWrapper.classList.remove('expanded');
+        setTimeout(() => {
+          categoryTabsWrapper.style.display = 'none';
+        }, 300); // Wait for CSS transition to finish before hiding it from DOM
+      } else {
+        categoryTabsWrapper.style.display = 'block';
+        // Give browser a tiny delay to render 'block' before applying the height transition
+        setTimeout(() => {
+          categoryTabsWrapper.classList.add('expanded');
+        }, 10);
+      }
     });
   }
 
