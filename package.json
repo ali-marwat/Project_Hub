@@ -1,0 +1,9 @@
+{
+  "name": "project-hub-deployment",
+  "version": "1.0.0",
+  "description": "Root configuration to automatically trigger Railway backend deployments",
+  "scripts": {
+    "postinstall": "cd backend && npm install",
+    "start": "cd backend && node server.js"
+  }
+}
