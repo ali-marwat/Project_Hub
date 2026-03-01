@@ -31,16 +31,26 @@
 
   <main class="container">
     <div class="category-filter">
-      <div class="filter-group">
-        <label>Filter by Category:</label>
-        <select id="categoryFilter">
-          <option value="all">All Categories</option>
-          <option value="Web Development">Web Development</option>
-          <option value="AI/ML">AI/ML</option>
-          <option value="Game Development">Game Development</option>
-          <option value="Mobile App">Mobile App</option>
-          <option value="Other">Other</option>
-        </select>
+      <div class="category-filter-header"
+        style="display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer;"
+        id="categoryToggleBtn">
+        <label style="cursor: pointer; margin: 0; font-weight: 600;">Filter by Category</label>
+        <span class="toggle-icon" style="transition: transform 0.3s ease;">▼</span>
+      </div>
+
+      <div class="category-tabs-wrapper" id="categoryTabsWrapper"
+        style="display: none; width: 100%; margin-top: 15px; opacity: 0; transition: opacity 0.3s ease;">
+        <div class="category-tabs-container" id="categoryTabs">
+          <button class="category-tab active" data-value="all">All</button>
+          <button class="category-tab" data-value="Web">Web Dev</button>
+          <button class="category-tab" data-value="AI/ML">AI/ML</button>
+          <button class="category-tab" data-value="Game">Game Dev</button>
+          <button class="category-tab" data-value="Mobile">Mobile App</button>
+          <button class="category-tab" data-value="Data">Data</button>
+          <button class="category-tab" data-value="CyberSec">CyberSec</button>
+          <button class="category-tab" data-value="DevOps">DevOps</button>
+          <button class="category-tab" data-value="Other">Other</button>
+        </div>
       </div>
 
       <div class="filter-group">

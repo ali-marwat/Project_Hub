@@ -44,16 +44,32 @@ var currentStep = 1;
 
 function setupEventListeners() {
   // Existing filters
-  var categoryFilter = document.getElementById('categoryFilter');
-  if (categoryFilter) {
-    categoryFilter.addEventListener('change', (e) => loadProjects(e.target.value));
+  var categoryToggleBtn = document.getElementById('categoryToggleBtn');
+  var categoryTabsWrapper = document.getElementById('categoryTabsWrapper');
+  if (categoryToggleBtn && categoryTabsWrapper) {
+    categoryToggleBtn.addEventListener('click', function () {
+      this.classList.toggle('open');
+      categoryTabsWrapper.classList.toggle('expanded');
+    });
   }
+
+  var categoryTabs = document.querySelectorAll('.category-tab');
+  if (categoryTabs.length > 0) {
+    categoryTabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        categoryTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        applyFilters();
+      });
+    });
+  }
+  var searchBar = document.getElementById('searchBar');
   if (searchBar) {
-    searchBar.addEventListener('input', (e) => searchProjects(e.target.value));
+    searchBar.addEventListener('input', applyFilters);
   }
   var sortFilter = document.getElementById('sortFilter');
   if (sortFilter) {
-    sortFilter.addEventListener('change', applySort);
+    sortFilter.addEventListener('change', applyFilters);
   }
 
   // Modal controls
@@ -354,15 +370,8 @@ function hideSubmitError() {
   document.getElementById('submitError').style.display = 'none';
 }
 
-function loadProjects(category) {
-  if (!category) category = 'all';
-
-  // Match Android collection 'Projects' and status 'APPROVED'
+function loadProjects() {
   let query = db.collection('projects').where('status', '==', 'APPROVED');
-
-  if (category !== 'all') {
-    query = query.where('category', '==', category);
-  }
 
   query.onSnapshot(function (snapshot) {
     allProjects = snapshot.docs.map(doc => ({
@@ -370,17 +379,7 @@ function loadProjects(category) {
       id: doc.id
     }));
 
-    // Sort based on selection
-    const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'newest';
-
-    if (sortValue === 'stars') {
-      allProjects.sort((a, b) => (b.githubStars || 0) - (a.githubStars || 0));
-    } else {
-      // Default: Newest first
-      allProjects.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-    }
-
-    displayProjects(allProjects);
+    applyFilters();
   }, function (error) {
     console.error('Error loading projects:', error);
     var container = document.getElementById('projectsContainer');
@@ -390,30 +389,48 @@ function loadProjects(category) {
   });
 }
 
-function applySort() {
-  const sortValue = document.getElementById('sortFilter').value;
-  const category = document.getElementById('categoryFilter').value;
+function applyFilters() {
+  const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'newest';
+  const activeTab = document.querySelector('.category-tab.active');
+  const selectedCategory = activeTab ? activeTab.dataset.value.toLowerCase() : 'all';
+  const searchBar = document.getElementById('searchBar');
+  const searchQuery = searchBar ? searchBar.value.trim().toLowerCase() : '';
 
-  // Re-load or re-sort
-  // Since we have allProjects cached in memory if category is 'all', we could just sort client-side
-  // But to be consistent with category filtering logic, we can just reload or sort the current array
+  let filtered = allProjects.filter(project => {
+    if (selectedCategory === 'all') return true;
+
+    let projCat = (project.category || '').toLowerCase();
+
+    if (selectedCategory === 'other') {
+      const mainCategories = ['web', 'ai/ml', 'game', 'mobile', 'data', 'cybersec', 'devops', 'iot', 'blockchain'];
+      return !mainCategories.some(c => projCat.includes(c));
+    }
+
+    if (selectedCategory.includes('web')) return projCat.includes('web');
+    if (selectedCategory.includes('game')) return projCat.includes('game');
+    if (selectedCategory.includes('mobile')) return projCat.includes('mobile');
+
+    return projCat.includes(selectedCategory);
+  });
+
+  if (searchQuery) {
+    filtered = filtered.filter(project => {
+      var nameMatch = (project.name || '').toLowerCase().includes(searchQuery);
+      var descMatch = (project.description || '').toLowerCase().includes(searchQuery);
+      var userMatch = (project.userName || '').toLowerCase().includes(searchQuery);
+      var supMatch = (project.supervisorName || '').toLowerCase().includes(searchQuery);
+      var catMatch = (project.category || '').toLowerCase().includes(searchQuery);
+      return nameMatch || descMatch || userMatch || supMatch || catMatch;
+    });
+  }
 
   if (sortValue === 'stars') {
-    allProjects.sort((a, b) => (b.githubStars || 0) - (a.githubStars || 0));
+    filtered.sort((a, b) => (b.githubStars || 0) - (a.githubStars || 0));
   } else {
-    allProjects.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+    filtered.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
   }
 
-  // If we have a search query, we should ideally re-run search, 
-  // but for now let's just re-display the sorted list (which might clear search)
-  // A better approach is to have a centralized 'render' function that applies all filters
-
-  var searchBar = document.getElementById('searchBar');
-  if (searchBar && searchBar.value.trim()) {
-    searchProjects(searchBar.value);
-  } else {
-    displayProjects(allProjects);
-  }
+  displayProjects(filtered);
 }
 
 function displayProjects(projects) {
@@ -483,29 +500,7 @@ function displayProjects(projects) {
   container.innerHTML = html;
 }
 
-function searchProjects(query) {
-  if (!query.trim()) {
-    displayProjects(allProjects);
-    return;
-  }
 
-  var filtered = [];
-  var lowerQuery = query.toLowerCase();
-
-  for (var i = 0; i < allProjects.length; i++) {
-    var project = allProjects[i];
-    var nameMatch = (project.name || '').toLowerCase().includes(lowerQuery);
-    var descMatch = (project.description || '').toLowerCase().includes(lowerQuery);
-    var userMatch = (project.userName || '').toLowerCase().includes(lowerQuery);
-    var supMatch = (project.supervisorName || '').toLowerCase().includes(lowerQuery);
-
-    if (nameMatch || descMatch || userMatch || supMatch) {
-      filtered.push(project);
-    }
-  }
-
-  displayProjects(filtered);
-}
 
 function viewProject(id) {
   window.location.href = 'project-details.html?id=' + id;
