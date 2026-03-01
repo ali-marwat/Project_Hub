@@ -469,7 +469,8 @@ body {
   /* Chrome, Safari and Opera */
 }
 
-.category-tab {
+.category-tab,
+.sort-tab {
   padding: 8px 18px;
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -483,13 +484,15 @@ body {
   backdrop-filter: blur(5px);
 }
 
-.category-tab:hover {
+.category-tab:hover,
+.sort-tab:hover {
   background: rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.6);
   transform: translateY(-2px);
 }
 
-.category-tab.active {
+.category-tab.active,
+.sort-tab.active {
   background: white;
   color: #0072ff;
   border-color: white;

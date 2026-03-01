@@ -71,6 +71,12 @@ function setupEventListeners() {
         categoryTabs.forEach(t => t.classList.remove('active'));
         this.classList.add('active');
         applyFilters();
+
+        // Auto-scroll to projects container
+        var container = document.getElementById('projectsContainer');
+        if (container) {
+          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
       });
     });
   }
@@ -78,9 +84,21 @@ function setupEventListeners() {
   if (searchBar) {
     searchBar.addEventListener('input', applyFilters);
   }
-  var sortFilter = document.getElementById('sortFilter');
-  if (sortFilter) {
-    sortFilter.addEventListener('change', applyFilters);
+  var sortTabs = document.querySelectorAll('.sort-tab');
+  if (sortTabs.length > 0) {
+    sortTabs.forEach(tab => {
+      tab.addEventListener('click', function () {
+        sortTabs.forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        applyFilters();
+
+        // Auto-scroll to projects container
+        var container = document.getElementById('projectsContainer');
+        if (container) {
+          container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
   }
 
   // Modal controls
@@ -401,7 +419,8 @@ function loadProjects() {
 }
 
 function applyFilters() {
-  const sortValue = document.getElementById('sortFilter') ? document.getElementById('sortFilter').value : 'newest';
+  const activeSortTab = document.querySelector('.sort-tab.active');
+  const sortValue = activeSortTab ? activeSortTab.dataset.value : 'newest';
   const activeTab = document.querySelector('.category-tab.active');
   const selectedCategory = activeTab ? activeTab.dataset.value.toLowerCase() : 'all';
   const searchBar = document.getElementById('searchBar');

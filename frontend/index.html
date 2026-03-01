@@ -41,12 +41,12 @@
           <span class="toggle-icon" style="transition: transform 0.3s ease;">▼</span>
         </div>
 
-        <div class="filter-group" style="margin: 0;">
-          <label style="font-weight: 500;">Sort by:</label>
-          <select id="sortFilter">
-            <option value="newest">Newest First</option>
-            <option value="stars">Most Popular (Stars)</option>
-          </select>
+        <div class="filter-group" style="margin: 0; align-items: center; justify-content: flex-end;">
+          <label style="font-weight: 500; margin-right: 10px;">Sort by:</label>
+          <div class="sort-tabs-container" id="sortTabs" style="display: flex; gap: 8px;">
+            <button class="sort-tab active" data-value="newest">Newest First</button>
+            <button class="sort-tab" data-value="stars">Most Popular ⭐</button>
+          </div>
         </div>
       </div>
 
