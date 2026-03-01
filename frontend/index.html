@@ -32,46 +32,54 @@
   <main class="container">
     <div class="category-filter" style="flex-direction: column; align-items: stretch; gap: 15px;">
 
-      <!-- Top Row with Flex -->
       <div
         style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
-        <div class="category-filter-header" style="display: flex; align-items: center; gap: 10px; cursor: pointer;"
-          id="categoryToggleBtn">
-          <label style="cursor: pointer; margin: 0; font-weight: 600; font-size: 16px;">Filter by Category</label>
-          <span class="toggle-icon" style="transition: transform 0.3s ease;">▼</span>
+
+        <!-- Category Section -->
+        <div style="display: flex; align-items: center; gap: 15px; flex: 1; min-width: 0;">
+          <div class="category-filter-header"
+            style="display: flex; align-items: center; gap: 10px; cursor: pointer; white-space: nowrap;"
+            id="categoryToggleBtn">
+            <label style="cursor: pointer; margin: 0; font-weight: 600; font-size: 16px;">Filter by Category</label>
+            <span class="toggle-icon" style="transition: transform 0.3s ease;">▼</span>
+          </div>
+
+          <!-- Expandable Horizontal Wrapper for Category -->
+          <div class="category-tabs-wrapper horizontal-expand" id="categoryTabsWrapper"
+            style="display: none; opacity: 0; transition: opacity 0.3s ease; flex: 1; min-width: 0;">
+            <div class="category-tabs-container" id="categoryTabs">
+              <button class="category-tab active" data-value="all">All</button>
+              <button class="category-tab" data-value="Web">Web Dev</button>
+              <button class="category-tab" data-value="AI/ML">AI/ML</button>
+              <button class="category-tab" data-value="Game">Game Dev</button>
+              <button class="category-tab" data-value="Mobile">Mobile App</button>
+              <button class="category-tab" data-value="Data">Data</button>
+              <button class="category-tab" data-value="CyberSec">CyberSec</button>
+              <button class="category-tab" data-value="DevOps">DevOps</button>
+              <button class="category-tab" data-value="Other">Other</button>
+            </div>
+          </div>
         </div>
 
-        <div class="category-filter-header"
-          style="display: flex; align-items: center; gap: 10px; cursor: pointer; justify-content: flex-end;"
-          id="sortToggleBtn">
-          <label style="cursor: pointer; margin: 0; font-weight: 600; font-size: 16px;">Sort by</label>
-          <span class="toggle-icon" style="transition: transform 0.3s ease; display: inline-block;">▼</span>
-        </div>
-      </div>
+        <!-- Sort Section -->
+        <div style="display: flex; align-items: center; gap: 15px; justify-content: flex-end;">
+          <!-- Expandable Horizontal Wrapper for Sort -->
+          <div class="category-tabs-wrapper horizontal-expand" id="sortTabsWrapper"
+            style="display: none; opacity: 0; transition: opacity 0.3s ease; justify-content: flex-end;">
+            <div class="sort-tabs-container" id="sortTabs" style="display: flex; gap: 8px;">
+              <button class="sort-tab active" data-value="newest">Newest First</button>
+              <button class="sort-tab" data-value="stars">Most Popular ⭐</button>
+            </div>
+          </div>
 
-      <!-- Expandable Bottom Row for Category -->
-      <div class="category-tabs-wrapper" id="categoryTabsWrapper"
-        style="display: none; width: 100%; opacity: 0; transition: opacity 0.3s ease;">
-        <div class="category-tabs-container" id="categoryTabs">
-          <button class="category-tab active" data-value="all">All</button>
-          <button class="category-tab" data-value="Web">Web Dev</button>
-          <button class="category-tab" data-value="AI/ML">AI/ML</button>
-          <button class="category-tab" data-value="Game">Game Dev</button>
-          <button class="category-tab" data-value="Mobile">Mobile App</button>
-          <button class="category-tab" data-value="Data">Data</button>
-          <button class="category-tab" data-value="CyberSec">CyberSec</button>
-          <button class="category-tab" data-value="DevOps">DevOps</button>
-          <button class="category-tab" data-value="Other">Other</button>
+          <div class="category-filter-header"
+            style="display: flex; align-items: center; gap: 10px; cursor: pointer; white-space: nowrap;"
+            id="sortToggleBtn">
+            <label style="cursor: pointer; margin: 0; font-weight: 600; font-size: 16px;">Sort by</label>
+            <span class="toggle-icon" style="transition: transform 0.3s ease; display: inline-block;">▼</span>
+          </div>
         </div>
-      </div>
 
-      <!-- Expandable Bottom Row for Sort -->
-      <div class="category-tabs-wrapper" id="sortTabsWrapper"
-        style="display: none; width: 100%; opacity: 0; transition: opacity 0.3s ease; justify-content: flex-end;">
-        <div class="sort-tabs-container" id="sortTabs" style="display: flex; gap: 8px;">
-          <button class="sort-tab active" data-value="newest">Newest First</button>
-          <button class="sort-tab" data-value="stars">Most Popular ⭐</button>
-        </div>
       </div>
 
     </div>
