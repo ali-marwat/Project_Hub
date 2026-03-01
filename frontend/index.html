@@ -30,16 +30,29 @@
   </nav>
 
   <main class="container">
-    <div class="category-filter">
-      <div class="category-filter-header"
-        style="display: flex; justify-content: space-between; align-items: center; width: 100%; cursor: pointer;"
-        id="categoryToggleBtn">
-        <label style="cursor: pointer; margin: 0; font-weight: 600;">Filter by Category</label>
-        <span class="toggle-icon" style="transition: transform 0.3s ease;">▼</span>
+    <div class="category-filter" style="flex-direction: column; align-items: stretch; gap: 15px;">
+
+      <!-- Top Row with Flex -->
+      <div
+        style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 15px;">
+        <div class="category-filter-header" style="display: flex; align-items: center; gap: 10px; cursor: pointer;"
+          id="categoryToggleBtn">
+          <label style="cursor: pointer; margin: 0; font-weight: 600; font-size: 16px;">Filter by Category</label>
+          <span class="toggle-icon" style="transition: transform 0.3s ease;">▼</span>
+        </div>
+
+        <div class="filter-group" style="margin: 0;">
+          <label style="font-weight: 500;">Sort by:</label>
+          <select id="sortFilter">
+            <option value="newest">Newest First</option>
+            <option value="stars">Most Popular (Stars)</option>
+          </select>
+        </div>
       </div>
 
+      <!-- Expandable Bottom Row -->
       <div class="category-tabs-wrapper" id="categoryTabsWrapper"
-        style="display: none; width: 100%; margin-top: 15px; opacity: 0; transition: opacity 0.3s ease;">
+        style="display: none; width: 100%; opacity: 0; transition: opacity 0.3s ease;">
         <div class="category-tabs-container" id="categoryTabs">
           <button class="category-tab active" data-value="all">All</button>
           <button class="category-tab" data-value="Web">Web Dev</button>
@@ -53,13 +66,6 @@
         </div>
       </div>
 
-      <div class="filter-group">
-        <label>Sort by:</label>
-        <select id="sortFilter">
-          <option value="newest">Newest First</option>
-          <option value="stars">Most Popular (Stars)</option>
-        </select>
-      </div>
     </div>
 
     <div id="projectsContainer" class="projects-grid"></div>
