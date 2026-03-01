@@ -7,6 +7,6 @@ const CONFIG = {
     get API_URL() {
         return this.isDevelopment
             ? 'http://localhost:3000/api'
-            : 'https://your-production-backend-name.onrender.com/api'; // <--- Change this line when you deploy the backend
+            : 'https://projecthub-production-e712.up.railway.app/api';
     }
 };
