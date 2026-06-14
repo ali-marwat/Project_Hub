@@ -29,6 +29,20 @@ function checkAdminAuth() {
   if (greetingElement) {
     greetingElement.textContent = 'Admin: ' + currentUser.username;
   }
+
+  // Load GitHub avatar into header
+  var avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) {
+    var photoUrl = currentUser.photoUrl || currentUser.photoURL || '';
+    if (photoUrl) {
+      avatarEl.src = photoUrl;
+      avatarEl.style.display = 'inline-block';
+    } else {
+      avatarEl.src = 'https://github.com/' + encodeURIComponent(currentUser.username) + '.png?size=48';
+      avatarEl.style.display = 'inline-block';
+      avatarEl.onerror = function() { this.style.display = 'none'; };
+    }
+  }
 }
 
 function switchTab(status, btn) {
@@ -108,7 +122,7 @@ function displayAdminProjects(projects) {
       html += '<button class="btn-primary" onclick="approveProject(\'' + project.id + '\')">✅ Approve</button>';
     }
 
-    if (project.status !== 'REJECTED') {
+    if (project.status === 'PENDING') {
       html += '<button class="btn-secondary" onclick="rejectProject(\'' + project.id + '\')">❌ Reject</button>';
     }
 

@@ -20,6 +20,20 @@ function checkAuth() {
     greetingElement.textContent = 'Hello, ' + currentUser.username + '!';
   }
 
+  // Load GitHub avatar into header
+  var avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) {
+    var photoUrl = currentUser.photoUrl || currentUser.photoURL || '';
+    if (photoUrl) {
+      avatarEl.src = photoUrl;
+      avatarEl.style.display = 'inline-block';
+    } else {
+      avatarEl.src = 'https://github.com/' + encodeURIComponent(currentUser.username) + '.png?size=48';
+      avatarEl.style.display = 'inline-block';
+      avatarEl.onerror = function() { this.style.display = 'none'; };
+    }
+  }
+
   var adminLink = document.getElementById('adminLink');
   if (adminLink && currentUser.role === 'admin') {
     adminLink.style.display = 'inline-block';

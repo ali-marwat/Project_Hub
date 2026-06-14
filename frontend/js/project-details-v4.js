@@ -32,6 +32,25 @@ function checkAuth() {
 
   currentUser = JSON.parse(userData);
 
+  var greetingElement = document.getElementById('userGreeting');
+  if (greetingElement) {
+    greetingElement.textContent = 'Hello, ' + currentUser.username + '!';
+  }
+
+  // Load GitHub avatar into header
+  var avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) {
+    var photoUrl = currentUser.photoUrl || currentUser.photoURL || '';
+    if (photoUrl) {
+      avatarEl.src = photoUrl;
+      avatarEl.style.display = 'inline-block';
+    } else {
+      avatarEl.src = 'https://github.com/' + encodeURIComponent(currentUser.username) + '.png?size=48';
+      avatarEl.style.display = 'inline-block';
+      avatarEl.onerror = function() { this.style.display = 'none'; };
+    }
+  }
+
   var adminLink = document.getElementById('adminLink');
   if (adminLink && currentUser.role === 'admin') {
     adminLink.style.display = 'inline-block';
@@ -96,7 +115,7 @@ async function renderProjectV4(project) {
   }
 
   html += '<p><strong>Author:</strong> ' + authorName + '</p>';
-  html += '<p><strong>Language:</strong> ' + (project.language || 'N/A') + '</p>';
+  html += '<div id="languageBarContainer" class="github-languages-section"><p style="color:#999;font-size:14px;">Loading languages...</p></div>';
   html += '<hr style="opacity: 0.1; margin: 15px 0;">';
   html += '<p class="description">' + (project.description || 'No description').replace(/\n/g, '<br>') + '</p>';
 
@@ -110,11 +129,98 @@ async function renderProjectV4(project) {
   html += '<button class="btn-primary" onclick="toggleUpvote()" id="upvoteBtn">';
   html += project.userHasUpvoted ? '<span style="font-size: 1.2em;">❤️</span> Remove Upvote' : '<span style="font-size: 1.2em;">❤️</span> Upvote';
   html += '</button>';
-  html += '<button class="btn-primary" onclick="window.open(\'' + project.githubLink + '\', \'_blank\')">View on GitHub</button>';
-  html += '<button class="btn-primary" style="background: #28a745; margin-left: 10px;" onclick="window.open(\'' + project.githubLink + '/archive/HEAD.zip\', \'_blank\')">⬇️ Download Code</button>';
+  html += '<button class="btn-primary" style="background:#24292e;" onclick="window.open(\'' + project.githubLink + '\', \'_blank\')"><svg style="width:18px;height:18px;vertical-align:middle;margin-right:6px;fill:white;" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</button>';
+  html += '<button class="btn-primary" style="background: #28a745; margin-left: 10px;" onclick="window.open(\'' + project.githubLink + '/archive/HEAD.zip\', \'_blank\')">💾 Download Code</button>';
   html += '</div>';
 
   document.getElementById('projectDetails').innerHTML = html;
+
+  if (project.githubLink) {
+    fetchAndRenderLanguages(project.githubLink);
+  }
+}
+
+async function fetchAndRenderLanguages(githubLink) {
+  const container = document.getElementById('languageBarContainer');
+  if (!container) return;
+
+  // Extract owner and repo from githubLink
+  let owner, repo;
+  try {
+    const urlParts = new URL(githubLink).pathname.split('/').filter(Boolean);
+    if (urlParts.length >= 2) {
+      owner = urlParts[0];
+      repo = urlParts[1];
+    } else {
+      throw new Error("Invalid GitHub link format");
+    }
+  } catch (e) {
+    console.error("URL Error:", e);
+    container.innerHTML = '<p><strong>Language Error:</strong> Invalid GitHub Link</p>';
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/github/languages/${owner}/${repo}`);
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Status ${response.status}: ${errText}`);
+    }
+    const languages = await response.json();
+    
+    if (Object.keys(languages).length === 0) {
+      container.innerHTML = '<p><strong>Language:</strong> N/A (No languages found)</p>';
+      return;
+    }
+
+    // GitHub Language Colors (simplified map)
+    const langColors = {
+      "JavaScript": "#f1e05a",
+      "HTML": "#e34c26",
+      "CSS": "#563d7c",
+      "Python": "#3572A5",
+      "Java": "#b07219",
+      "C++": "#f34b7d",
+      "TypeScript": "#3178c6",
+      "C#": "#178600",
+      "PHP": "#4F5D95",
+      "Ruby": "#701516",
+      "C": "#555555",
+      "Swift": "#F05138",
+      "Kotlin": "#A97BFF",
+      "Dart": "#00B4AB",
+      "Go": "#00ADD8",
+      "Rust": "#dea584",
+      "Vue": "#41b883",
+      "Jupyter Notebook": "#DA5B0B",
+      "Shell": "#89e051"
+    };
+
+    let totalBytes = 0;
+    for (let lang in languages) {
+      totalBytes += languages[lang];
+    }
+
+    let progressHtml = '<div class="lang-progress-bar">';
+    let legendHtml = '<div class="lang-legend">';
+
+    for (let lang in languages) {
+      const percentage = ((languages[lang] / totalBytes) * 100).toFixed(1);
+      const color = langColors[lang] || "#" + Math.floor(Math.random()*16777215).toString(16); // Default to random if not in map
+      
+      progressHtml += `<div class="lang-progress-segment" style="width: ${percentage}%; background-color: ${color};" title="${lang} ${percentage}%"></div>`;
+      legendHtml += `<span class="lang-legend-item"><span class="lang-dot" style="background-color: ${color};"></span>${lang} <span style="color:#666; font-size: 0.9em; margin-left:2px;">${percentage}%</span></span>`;
+    }
+
+    progressHtml += '</div>';
+    legendHtml += '</div>';
+
+    container.innerHTML = `<p><strong>Languages</strong></p>` + progressHtml + legendHtml;
+
+  } catch (error) {
+    console.error('Error fetching languages:', error);
+    container.innerHTML = `<p style="color:red"><strong>Language Error:</strong> ${error.message}</p><p style="font-size:12px">Did you restart your backend Node server after I added the route?</p>`;
+  }
 }
 
 function displayComments(comments) {

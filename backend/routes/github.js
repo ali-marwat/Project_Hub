@@ -4,6 +4,8 @@ const router = express.Router();
 require('dotenv').config();
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
+const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
 router.get('/repos/:username', async (req, res) => {
     const { username } = req.params;
@@ -22,7 +24,13 @@ router.get('/repos/:username', async (req, res) => {
         }
 
         console.log(`[GitHub Proxy] Fetching repos for: ${username}`);
-        const response = await axios.get(`https://api.github.com/users/${username}/repos?sort=updated&per_page=15`, {
+        let apiUrl = `https://api.github.com/users/${username}/repos?sort=updated&per_page=15`;
+        if (GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET) {
+            apiUrl += `&client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`;
+            console.log(`[GitHub Proxy] Using Client ID/Secret for standard auth: Yes`);
+        }
+
+        const response = await axios.get(apiUrl, {
             headers: headers
         });
         console.log(`[GitHub Proxy] Success: Found ${response.data.length} repos`);
@@ -63,7 +71,12 @@ router.get('/readme/:owner/:repo', async (req, res) => {
             headers['Authorization'] = `token ${GITHUB_TOKEN}`;
         }
 
-        const response = await axios.get(`https://api.github.com/repos/${owner}/${repo}/readme`, {
+        let apiUrl = `https://api.github.com/repos/${owner}/${repo}/readme`;
+        if (GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET) {
+            apiUrl += `?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`;
+        }
+
+        const response = await axios.get(apiUrl, {
             headers: headers
         });
 
@@ -75,6 +88,37 @@ router.get('/readme/:owner/:repo', async (req, res) => {
             });
         } else {
             res.status(500).json({ error: 'Error fetching README' });
+        }
+    }
+});
+
+router.get('/languages/:owner/:repo', async (req, res) => {
+    const { owner, repo } = req.params;
+
+    try {
+        const headers = {
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'ProjectHub-StudentShowcase'
+        };
+
+        if (GITHUB_TOKEN) {
+            headers['Authorization'] = `token ${GITHUB_TOKEN}`;
+        }
+
+        let apiUrl = `https://api.github.com/repos/${owner}/${repo}/languages`;
+        if (GITHUB_CLIENT_ID && GITHUB_CLIENT_SECRET) {
+            apiUrl += `?client_id=${GITHUB_CLIENT_ID}&client_secret=${GITHUB_CLIENT_SECRET}`;
+        }
+
+        const response = await axios.get(apiUrl, { headers });
+        res.json(response.data);
+    } catch (error) {
+        if (error.response) {
+            res.status(error.response.status).json({
+                error: error.response.data.message || 'GitHub API Error'
+            });
+        } else {
+            res.status(500).json({ error: 'Error fetching languages' });
         }
     }
 });

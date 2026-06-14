@@ -10,6 +10,16 @@
 
 <body>
   <nav class="navbar">
+    <div class="nav-top-bar">
+      <div class="container nav-top-inner">
+        <div class="nav-top-spacer"></div>
+        <div class="nav-user-section">
+          <img id="userAvatar" class="nav-avatar" src="" alt="" style="display:none;">
+          <span id="userGreeting"></span>
+          <button onclick="logout()" class="btn-logout">Logout</button>
+        </div>
+      </div>
+    </div>
     <div class="container nav-container">
       <div class="nav-left">
         <div class="logo">🎓 Project Hub</div>
@@ -23,8 +33,6 @@
       </div>
       <div class="nav-right">
         <input type="text" id="searchBar" placeholder="Search projects...">
-        <span id="userGreeting"></span>
-        <button onclick="logout()" class="btn-logout">Logout</button>
       </div>
     </div>
   </nav>
@@ -225,6 +233,7 @@
   <script src="js/config.js"></script>
   <script src="js/main.js?v=2"></script>
 
+  <script src="js/input-validation.js"></script>
   <script src="js/notifications.js"></script>
 </body>
 

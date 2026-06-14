@@ -10,17 +10,30 @@
 
 <body>
   <nav class="navbar">
-    <div class="container">
-      <div class="logo">🎓 Project Hub</div>
-      <div class="nav-links">
-        <a href="index.html">All Projects</a>
-        <a href="trending.html" class="active">Trending</a>
-        <a href="dashboard.html">My Dashboard</a>
-        <a href="bookmarks.html">Bookmarks</a>
-        <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
-        <span id="userGreeting"></span>
-        <button onclick="logout()" class="btn-logout">Logout</button>
+    <div class="nav-top-bar">
+      <div class="container nav-top-inner">
+        <div class="nav-top-spacer"></div>
+        <div class="nav-user-section">
+          <img id="userAvatar" class="nav-avatar" src="" alt="" style="display:none;">
+          <span id="userGreeting"></span>
+          <button onclick="logout()" class="btn-logout">Logout</button>
+        </div>
       </div>
+    </div>
+    <div class="container nav-container">
+      <div class="nav-left">
+        <div class="logo">🎓 Project Hub<span class="breadcrumb"> / Trending</span></div>
+      </div>
+      <div class="nav-center">
+        <div class="nav-links">
+          <a href="index.html">All Projects</a>
+          <a href="trending.html" class="active">Trending</a>
+          <a href="dashboard.html">My Dashboard</a>
+          <a href="bookmarks.html">Bookmarks</a>
+          <a href="admin.html" id="adminLink" style="display: none;">Admin Panel</a>
+        </div>
+      </div>
+      <div class="nav-right"></div>
     </div>
   </nav>
 
@@ -50,6 +63,8 @@
     </div>
   </main>
 
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/config.js"></script>

@@ -10,6 +10,16 @@
 
 <body>
   <nav class="navbar">
+    <div class="nav-top-bar">
+      <div class="container nav-top-inner">
+        <div class="nav-top-spacer"></div>
+        <div class="nav-user-section">
+          <img id="userAvatar" class="nav-avatar" src="" alt="" style="display:none;">
+          <span id="userGreeting"></span>
+          <button onclick="logout()" class="btn-logout">Logout</button>
+        </div>
+      </div>
+    </div>
     <div class="container nav-container">
       <div class="nav-left">
         <div class="logo">🎓 Project Hub<span class="breadcrumb"> / Admin Panel</span></div>
@@ -21,10 +31,7 @@
           <a href="admin.html" class="active" id="adminLink">Admin Panel</a>
         </div>
       </div>
-      <div class="nav-right">
-        <span id="userGreeting"></span>
-        <button onclick="logout()" class="btn-logout">Logout</button>
-      </div>
+      <div class="nav-right"></div>
     </div>
   </nav>
 

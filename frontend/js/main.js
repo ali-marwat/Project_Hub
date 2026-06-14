@@ -20,9 +20,23 @@ function checkAuth() {
   var greetingElement = document.getElementById('userGreeting');
   if (greetingElement) {
     greetingElement.textContent = 'Hello, ' + currentUser.username + '!';
-    // Debug: Agar admin nahi ban pa rahe toh hum ye check kar sakte hain
     if (currentUser.role === 'admin') {
       greetingElement.innerHTML += ' <span style="color:#ffd700; font-size:10px;">(ADMIN)</span>';
+    }
+  }
+
+  // Load GitHub avatar into header
+  var avatarEl = document.getElementById('userAvatar');
+  if (avatarEl) {
+    var photoUrl = currentUser.photoUrl || currentUser.photoURL || '';
+    if (photoUrl) {
+      avatarEl.src = photoUrl;
+      avatarEl.style.display = 'inline-block';
+    } else {
+      // Fallback: try GitHub API with username
+      avatarEl.src = 'https://github.com/' + encodeURIComponent(currentUser.username) + '.png?size=48';
+      avatarEl.style.display = 'inline-block';
+      avatarEl.onerror = function() { this.style.display = 'none'; };
     }
   }
 
@@ -522,9 +536,15 @@ function displayProjects(projects) {
     html += '<span class="stat">🍴 ' + (project.githubForks || 0) + '</span>';
     html += '<span class="stat">❤️ ' + (project.likes ? project.likes.length : 0) + '</span>';
     html += '</div>';
-    html += '<p style="font-size: 12px; color: #555;">By ' + (project.userName || 'Unknown') + ' • ' + new Date(project.timestamp).toLocaleDateString() + '</p>';
+    // Extract GitHub username from the repo link for avatar
+    var ghUser = '';
+    if (project.githubLink) {
+      try { ghUser = new URL(project.githubLink).pathname.split('/').filter(Boolean)[0]; } catch(e) {}
+    }
+    var avatarHtml = ghUser ? '<img class="project-author-avatar" src="https://github.com/' + ghUser + '.png?size=44" onerror="this.style.display=\'none\'" alt="">' : '';
+    html += '<div class="project-author-row">' + avatarHtml + '<span>By ' + (project.userName || 'Unknown') + ' • ' + new Date(project.timestamp).toLocaleDateString() + '</span></div>';
     html += '<div style="margin-top: 15px;">';
-    html += '<button class="btn-primary" onclick="event.stopPropagation(); window.open(\'' + project.githubLink + '\', \'_blank\')">View on GitHub</button>';
+    html += '<button class="btn-primary" style="background:#24292e;" onclick="event.stopPropagation(); window.open(\'' + project.githubLink + '\', \'_blank\')"><svg style="width:16px;height:16px;vertical-align:middle;margin-right:5px;fill:white;" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</button>';
     html += '</div>';
     html += '</div>';
   }
